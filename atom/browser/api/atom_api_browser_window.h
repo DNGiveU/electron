@@ -71,7 +71,7 @@ class BrowserWindow : public mate::TrackableObject<BrowserWindow>,
   void RenderViewCreated(content::RenderViewHost* render_view_host) override;
   void DidFirstVisuallyNonEmptyPaint() override;
   void BeforeUnloadDialogCancelled() override;
-  void OnRendererUnresponsive(content::RenderWidgetHost*) override;
+  void OnRendererUnresponsive(content::RenderProcessHost*) override;
   bool OnMessageReceived(const IPC::Message& message,
                          content::RenderFrameHost* rfh) override;
 
