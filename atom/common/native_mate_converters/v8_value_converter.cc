@@ -208,7 +208,7 @@ v8::Local<v8::Value> V8ValueConverter::ToV8ValueImpl(
                            static_cast<const base::Value*>(value));
 
     default:
-      LOG(ERROR) << "Unexpected value type: " << value->GetType();
+      LOG(ERROR) << "Unexpected value type: " << value->type();
       return v8::Null(isolate);
   }
 }
