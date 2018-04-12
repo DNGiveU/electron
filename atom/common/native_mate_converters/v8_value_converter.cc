@@ -281,7 +281,9 @@ v8::Local<v8::Value> V8ValueConverter::ToArrayBuffer(
     return v8::Uint8Array::New(array_buffer, 0, length);
   }
 
-  mate::Dictionary buffer_class(isolate, buffer_value->ToObject());
+  mate::Dictionary buffer_class(
+      isolate,
+      buffer_value->ToObject(isolate->GetCurrentContext()).ToLocalChecked());
   v8::Local<v8::Value> from_value;
   if (!buffer_class.Get("from", &from_value) ||
       !from_value->IsFunction()) {
@@ -314,21 +316,23 @@ base::Value* V8ValueConverter::FromV8ValueImpl(
   if (val->IsNull())
     return base::MakeUnique<base::Value>().release();
 
+  auto context = isolate->GetCurrentContext();
+
   if (val->IsBoolean())
-    return new base::Value(val->ToBoolean()->Value());
+    return new base::Value(val->ToBoolean(context).ToLocalChecked()->Value());
 
   if (val->IsInt32())
-    return new base::Value(val->ToInt32()->Value());
+    return new base::Value(val->ToInt32(context).ToLocalChecked()->Value());
 
   if (val->IsNumber()) {
-    double val_as_double = val->ToNumber()->Value();
+    double val_as_double = val->ToNumber(context).ToLocalChecked()->Value();
     if (!std::isfinite(val_as_double))
       return nullptr;
     return new base::Value(val_as_double);
   }
 
   if (val->IsString()) {
-    v8::String::Utf8Value utf8(val->ToString());
+    v8::String::Utf8Value utf8(val->ToString(context).ToLocalChecked());
     return new base::Value(std::string(*utf8, utf8.length()));
   }
 
@@ -344,7 +348,7 @@ base::Value* V8ValueConverter::FromV8ValueImpl(
       v8::Local<v8::Value> result =
           toISOString.As<v8::Function>()->Call(val, 0, nullptr);
       if (!result.IsEmpty()) {
-        v8::String::Utf8Value utf8(result->ToString());
+        v8::String::Utf8Value utf8(result->ToString(context).ToLocalChecked());
         return new base::Value(std::string(*utf8, utf8.length()));
       }
     }
@@ -353,8 +357,10 @@ base::Value* V8ValueConverter::FromV8ValueImpl(
   if (val->IsRegExp()) {
     if (!reg_exp_allowed_)
       // JSON.stringify converts to an object.
-      return FromV8Object(val->ToObject(), state, isolate);
-    return new base::Value(*v8::String::Utf8Value(val->ToString()));
+      return FromV8Object(val->ToObject(context).ToLocalChecked(),
+          state, isolate);
+    return new base::Value(
+        *v8::String::Utf8Value(val->ToString(context).ToLocalChecked()));
   }
 
   // v8::Value doesn't have a ToArray() method for some reason.
@@ -365,7 +371,8 @@ base::Value* V8ValueConverter::FromV8ValueImpl(
     if (!function_allowed_)
       // JSON.stringify refuses to convert function(){}.
       return nullptr;
-    return FromV8Object(val->ToObject(), state, isolate);
+    return FromV8Object(val->ToObject(context).ToLocalChecked(),
+        state, isolate);
   }
 
   if (node::Buffer::HasInstance(val)) {
@@ -373,7 +380,8 @@ base::Value* V8ValueConverter::FromV8ValueImpl(
   }
 
   if (val->IsObject()) {
-    return FromV8Object(val->ToObject(), state, isolate);
+    return FromV8Object(val->ToObject(context).ToLocalChecked(),
+        state, isolate);
   }
 
   LOG(ERROR) << "Unexpected v8 value type encountered.";
@@ -457,7 +465,8 @@ base::Value* V8ValueConverter::FromV8Object(
       continue;
     }
 
-    v8::String::Utf8Value name_utf8(key->ToString());
+    v8::String::Utf8Value name_utf8(
+        key->ToString(isolate->GetCurrentContext()).ToLocalChecked());
 
     v8::TryCatch try_catch(isolate);
     v8::Local<v8::Value> child_v8 = val->Get(key);
