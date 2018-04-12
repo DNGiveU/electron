@@ -19,6 +19,7 @@
 #include "components/prefs/pref_service.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/download_item_utils.h"
 #include "content/public/browser/download_manager.h"
 #include "net/base/filename_util.h"
 
@@ -80,7 +81,9 @@ void AtomDownloadManagerDelegate::OnDownloadPathGenerated(
     return;
 
   NativeWindow* window = nullptr;
-  content::WebContents* web_contents = item->GetWebContents();
+  content::WebContents* web_contents =
+      content::DownloadItemUtils::GetWebContents(item);
+  ;
   auto relay = web_contents ? NativeWindowRelay::FromWebContents(web_contents)
                             : nullptr;
   if (relay)
