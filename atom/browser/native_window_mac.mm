@@ -1526,7 +1526,7 @@ gfx::NativeWindow NativeWindowMac::GetNativeWindow() const {
 }
 
 gfx::AcceleratedWidget NativeWindowMac::GetAcceleratedWidget() const {
-  return [window_ contentView];
+  return gfx::kNullAcceleratedWidget;
 }
 
 void NativeWindowMac::SetProgressBar(double progress, const NativeWindow::ProgressState state) {
