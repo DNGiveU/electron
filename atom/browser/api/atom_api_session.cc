@@ -36,6 +36,7 @@
 #include "components/download/public/common/download_danger_type.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/download_item_utils.h"
 #include "content/public/browser/download_manager_delegate.h"
 #include "content/public/browser/storage_partition.h"
 #include "native_mate/dictionary.h"
@@ -518,7 +519,9 @@ void Session::OnDownloadCreated(content::DownloadManager* manager,
   auto handle = DownloadItem::Create(isolate(), item);
   if (item->GetState() == download::DownloadItem::INTERRUPTED)
     handle->SetSavePath(item->GetTargetFilePath());
-  bool prevent_default = Emit("will-download", handle, item->GetWebContents());
+  content::WebContents* web_contents =
+      content::DownloadItemUtils::GetWebContents(item);
+  bool prevent_default = Emit("will-download", handle, web_contents);
   if (prevent_default) {
     item->Cancel(true);
     item->Remove();
