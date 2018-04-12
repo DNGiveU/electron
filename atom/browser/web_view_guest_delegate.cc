@@ -10,6 +10,7 @@
 #include "content/public/browser/guest_host.h"
 #include "content/public/browser/navigation_handle.h"
 #include "content/public/browser/render_frame_host.h"
+#include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 
@@ -61,12 +62,10 @@ void WebViewGuestDelegate::SetSize(const SetSizeParams& params) {
 
   enable_auto_size &= !min_auto_size_.IsEmpty() && !max_auto_size_.IsEmpty();
 
-  content::RenderWidgetHostView* rwhv =
-      web_contents()->GetRenderWidgetHostView();
+  auto rvh = web_contents()->GetRenderViewHost();
   if (enable_auto_size) {
     // Autosize is being enabled.
-    if (rwhv)
-      rwhv->EnableAutoResize(min_auto_size_, max_auto_size_);
+    rvh->EnableAutoResize(min_auto_size_, max_auto_size_);
     normal_size_.SetSize(0, 0);
   } else {
     // Autosize is being disabled.
@@ -88,8 +87,7 @@ void WebViewGuestDelegate::SetSize(const SetSizeParams& params) {
     bool changed_due_to_auto_resize = false;
     if (auto_size_enabled_) {
       // Autosize was previously enabled.
-      if (rwhv)
-        rwhv->DisableAutoResize(new_size);
+      rvh->DisableAutoResize(new_size);
       changed_due_to_auto_resize = true;
     } else {
       // Autosize was already disabled.
