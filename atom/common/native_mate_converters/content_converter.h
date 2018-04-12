@@ -5,8 +5,6 @@
 #ifndef ATOM_COMMON_NATIVE_MATE_CONVERTERS_CONTENT_CONVERTER_H_
 #define ATOM_COMMON_NATIVE_MATE_CONVERTERS_CONTENT_CONVERTER_H_
 
-#include <utility>
-
 #include "content/public/browser/permission_type.h"
 #include "content/public/common/menu_item.h"
 #include "content/public/common/referrer.h"
@@ -17,10 +15,6 @@
 namespace content {
 struct ContextMenuParams;
 class WebContents;
-}
-
-namespace network {
-class ResourceRequestBody;
 }
 
 using ContextMenuParamsWithWebContents =
@@ -50,15 +44,6 @@ template<>
 struct Converter<content::PermissionType> {
   static v8::Local<v8::Value> ToV8(v8::Isolate* isolate,
                                    const content::PermissionType& val);
-};
-
-template<>
-struct Converter<scoped_refptr<network::ResourceRequestBody>> {
-  static v8::Local<v8::Value> ToV8(
-      v8::Isolate* isolate,
-      const scoped_refptr<network::ResourceRequestBody>& val);
-  static bool FromV8(v8::Isolate* isolate, v8::Local<v8::Value> val,
-                     scoped_refptr<network::ResourceRequestBody>* out);
 };
 
 template<>
