@@ -26,4 +26,4 @@ struct Converter<scoped_refptr<network::ResourceRequestBody>> {
 
 }  // namespace mate
 
-#endif  // ATOM_COMMON_NATIVE_MATE_CONVERTERS_CONTENT_CONVERTER_H_
+#endif  // ATOM_COMMON_NATIVE_MATE_CONVERTERS_NETWORK_CONVERTER_H_
