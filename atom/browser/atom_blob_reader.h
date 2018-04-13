@@ -36,7 +36,7 @@ class AtomBlobReader {
  public:
   using CompletionCallback = base::Callback<void(v8::Local<v8::Value>)>;
 
-  AtomBlobReader(content::ChromeBlobStorageContext* blob_context);
+  explicit AtomBlobReader(content::ChromeBlobStorageContext* blob_context);
   ~AtomBlobReader();
 
   void StartReading(
