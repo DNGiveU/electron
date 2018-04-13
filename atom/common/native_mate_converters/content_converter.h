@@ -5,6 +5,8 @@
 #ifndef ATOM_COMMON_NATIVE_MATE_CONVERTERS_CONTENT_CONVERTER_H_
 #define ATOM_COMMON_NATIVE_MATE_CONVERTERS_CONTENT_CONVERTER_H_
 
+#include <utility>
+
 #include "content/public/browser/permission_type.h"
 #include "content/public/common/menu_item.h"
 #include "content/public/common/referrer.h"
