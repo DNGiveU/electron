@@ -21,8 +21,9 @@ namespace mate {
 
 template<>
 struct Converter<download::DownloadItem::DownloadState> {
-  static v8::Local<v8::Value> ToV8(v8::Isolate* isolate,
-                                   download::DownloadItem::DownloadState state) {
+  static v8::Local<v8::Value> ToV8(
+      v8::Isolate* isolate,
+      download::DownloadItem::DownloadState state) {
     std::string download_state;
     switch (state) {
       case download::DownloadItem::IN_PROGRESS:
